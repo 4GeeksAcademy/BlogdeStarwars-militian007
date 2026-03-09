@@ -1,0 +1,36 @@
+
+body {
+   
+    background-image: url("https://cdn.eso.org/images/screen/eso1625a.jpg");
+    
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    
+    background-attachment: fixed;
+    
+    
+    background-color: #000000;
+    
+    
+    color: white;
+    
+   
+    margin: 0;
+    padding: 0;
+    
+    
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.card {
+    background-color: rgba(33, 37, 41, 0.9) !important; 
+}
+
+
+.single-container {
+    background-color: rgba(33, 37, 41, 0.85) !important;
+}
