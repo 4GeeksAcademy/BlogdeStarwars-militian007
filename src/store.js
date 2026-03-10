@@ -3,14 +3,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			people: [],
 			planets: [],
-			vehicles: [], // Mantenemos la lista de vehículos
+			vehicles: [],
 			favorites: []
 		},
 		actions: {
-			set_data: (endpoint, data) => {
-				const store = getStore();
-				setStore({ ...store, [endpoint]: data });
+			// Función para cargar los datos iniciales de la Home
+			getStarWarsData: async (endpoint) => {
+				try {
+					const response = await fetch(`https://www.swapi.tech/api/${endpoint}`);
+					const data = await response.json();
+					setStore({ [endpoint]: data.results });
+				} catch (error) {
+					console.error("Error cargando " + endpoint, error);
+				}
 			},
+
+			// Función para gestionar favoritos
 			add_favorite: (name) => {
 				const store = getStore();
 				if (store.favorites.includes(name)) {

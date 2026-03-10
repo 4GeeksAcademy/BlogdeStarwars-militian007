@@ -1,44 +1,51 @@
-import React, { useEffect, useContext } from "react";
-import { Context } from "../appContext.jsx";
+import React, { useContext, useEffect } from "react";
+import { Context } from "../appContext.jsx"; // Ruta según tu árbol de archivos
 import { Card } from "../components/Card.jsx";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
 
-	useEffect(() => {
-		const fetchData = async (endpoint) => {
-			try {
-				const response = await fetch(`https://www.swapi.tech/api/${endpoint}`);
-				const data = await response.json();
-				// Guardamos los datos usando la acción set_data para evitar errores de dispatch
-				actions.set_data(endpoint, data.results || data.result);
-			} catch (error) {
-				console.error("Error cargando " + endpoint, error);
-			}
-		};
+    useEffect(() => {
+        // Pedimos los datos solo una vez para evitar el parpadeo infinito
+        actions.getStarWarsData("people");
+        actions.getStarWarsData("planets");
+        actions.getStarWarsData("vehicles");
+    }, []); // IMPORTANTE: No quites estos corchetes
 
-		if (store.people.length === 0) fetchData("people");
-		if (store.planets.length === 0) fetchData("planets");
-		if (store.vehicles.length === 0) fetchData("vehicles");
-	}, []);
+    return (
+        <div className="container mt-5 pb-5">
+            <h1 className="text-danger mb-4">Characters</h1>
+            <div className="d-flex flex-row overflow-auto mb-5 pb-3 border-bottom border-secondary">
+                {store.people && store.people.length > 0 ? (
+                    store.people.map((person) => (
+                        <Card key={person.uid} item={person} category="people" />
+                    ))
+                ) : (
+                    <div className="spinner-border text-danger" role="status"></div>
+                )}
+            </div>
 
-	return (
-		<div className="container-fluid bg-black text-white min-vh-100 p-5">
-			<h1 className="text-danger fw-bold mb-4">Characters</h1>
-			<div className="d-flex flex-row overflow-auto pb-4 mb-5">
-				{store.people.map((p) => <Card key={p.uid} item={p} endpoint="people" />)}
-			</div>
+            <h1 className="text-danger mb-4">Planets</h1>
+            <div className="d-flex flex-row overflow-auto mb-5 pb-3 border-bottom border-secondary">
+                {store.planets && store.planets.length > 0 ? (
+                    store.planets.map((planet) => (
+                        <Card key={planet.uid} item={planet} category="planets" />
+                    ))
+                ) : (
+                    <div className="spinner-border text-danger" role="status"></div>
+                )}
+            </div>
 
-			<h1 className="text-danger fw-bold mb-4">Planets</h1>
-			<div className="d-flex flex-row overflow-auto pb-4 mb-5">
-				{store.planets.map((pl) => <Card key={pl.uid} item={pl} endpoint="planets" />)}
-			</div>
-
-			{/* SECCIÓN RECUPERADA: Vehicles */}
-			<h1 className="text-danger fw-bold mb-4">Vehicles</h1>
-			<div className="d-flex flex-row overflow-auto pb-4">
-				{store.vehicles.map((v) => <Card key={v.uid} item={v} endpoint="vehicles" />)}
-			</div>
-		</div>
-	);
+            <h1 className="text-danger mb-4">Vehicles</h1>
+            <div className="d-flex flex-row overflow-auto pb-3">
+                {store.vehicles && store.vehicles.length > 0 ? (
+                    store.vehicles.map((vehicle) => (
+                        <Card key={vehicle.uid} item={vehicle} category="vehicles" />
+                    ))
+                ) : (
+                    <div className="spinner-border text-danger" role="status"></div>
+                )}
+            </div>
+        </div>
+    );
 };

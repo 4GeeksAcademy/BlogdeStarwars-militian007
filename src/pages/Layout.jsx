@@ -1,20 +1,26 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
-import { Navbar } from "../components/Navbar.jsx";
-import { Footer } from "../components/Footer.jsx";
-import injectContext from "../appContext.jsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Home } from "./views/home";
+import { Single } from "./views/single";
+import injectContext from "./store/appContext";
+import { Navbar } from "./component/navbar";
 
 const Layout = () => {
-    return (
-        <div className="d-flex flex-column h-100 bg-dark text-white">
-            <Navbar />
-            <div className="container-fluid flex-grow-1 mt-5">
-                <Outlet />
-            </div>
-            <Footer />
-        </div>
-    );
+	const basename = process.env.BASENAME || "";
+
+	return (
+		<div>
+			<BrowserRouter basename={basename}>
+				<Navbar />
+				<Routes>
+					<Route element={<Home />} path="/" />
+					{/* Ruta corregida para Single */}
+					<Route element={<Single />} path="/single/:category/:theId" />
+					<Route element={<h1>Not found!</h1>} />
+				</Routes>
+			</BrowserRouter>
+		</div>
+	);
 };
 
-// Aquí inyectamos el contexto a toda la aplicación
 export default injectContext(Layout);
