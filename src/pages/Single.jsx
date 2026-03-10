@@ -6,7 +6,7 @@ export const Single = () => {
     const [item, setItem] = useState(null);
 
     useEffect(() => {
-        // Hacemos el fetch a la API según la categoría y el ID de la URL
+        
         fetch(`https://www.swapi.tech/api/${category}/${theId}`)
             .then(res => res.json())
             .then(data => {
@@ -19,13 +19,12 @@ export const Single = () => {
 
     if (!item) return <h1 className="text-center text-white mt-5">Cargando datos de la galaxia...</h1>;
 
-    // Configuración de la imagen: carpeta 'people' para personajes, el resto igual
     const folder = category === "people" ? "people" : category;
     const imgUrl = `https://raw.githubusercontent.com/breatheco-de/swapi-images/master/public/images/${folder}/${theId}.jpg`;
 
     return (
         <div className="container mt-5 mb-5">
-            {/* SECCIÓN SUPERIOR: IMAGEN Y DESCRIPCIÓN */}
+            
             <div className="row bg-dark text-white p-4 border-0 shadow-lg rounded" style={{ backgroundColor: "rgba(33, 37, 41, 0.9)" }}>
                 <div className="col-md-6 text-center">
                     <img 
@@ -49,16 +48,16 @@ export const Single = () => {
                 </div>
             </div>
 
-            {/* SECCIÓN INFERIOR: DETALLES TÉCNICOS (ROJO Y BLANCO) */}
+            
             <div className="row mt-4 bg-dark text-white p-4 rounded shadow-lg text-center border-top border-danger pt-4 fw-bold" style={{ backgroundColor: "rgba(33, 37, 41, 0.9)" }}>
                 
-                {/* Nombre siempre visible */}
+                
                 <div className="col-md-2 mb-3">
                     <span className="text-danger">Name</span><br/>
                     <span className="text-white fw-normal">{item.name}</span>
                 </div>
 
-                {/* DETALLES DE PERSONAJES */}
+                
                 {category === "people" && (
                     <>
                         <div className="col-md-2 mb-3"><span className="text-danger">Birth Year</span><br/><span className="fw-normal">{item.birth_year}</span></div>
@@ -69,7 +68,7 @@ export const Single = () => {
                     </>
                 )}
 
-                {/* DETALLES DE PLANETAS */}
+                
                 {category === "planets" && (
                     <>
                         <div className="col-md-2 mb-3"><span className="text-danger">Climate</span><br/><span className="fw-normal">{item.climate}</span></div>
@@ -80,7 +79,7 @@ export const Single = () => {
                     </>
                 )}
 
-                {/* DETALLES DE VEHÍCULOS / NAVES (CORREGIDO) */}
+                
                 {category === "vehicles" && (
                     <>
                         <div className="col-md-2 mb-3"><span className="text-danger">Model</span><br/><span className="fw-normal">{item.model}</span></div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import getState from "./store.js"; // Verifica que la ruta sea correcta
+import getState from "./store.js"; 
 
 export const Context = React.createContext(null);
 

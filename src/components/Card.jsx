@@ -5,9 +5,7 @@ import { Context } from "../appContext.jsx";
 export const Card = ({ item, category }) => {
     const { store, actions } = useContext(Context);
 
-    // --- LÓGICA DE IMAGEN IGUAL A LA DEL SINGLE ---
-    // Usamos 'people' para personajes y la categoría original para el resto.
-    // Usamos item.uid porque es el número que el servidor reconoce.
+   
     const folder = category === "people" ? "people" : category;
     const imgUrl = `https://raw.githubusercontent.com/breatheco-de/swapi-images/master/public/images/${folder}/${item.uid}.jpg`;
 
@@ -19,7 +17,7 @@ export const Card = ({ item, category }) => {
                 alt={item.name}
                 style={{ height: "250px", objectFit: "cover" }}
                 onError={(e) => {
-                    // Evitamos parpadeos: si falla, ponemos el placeholder y paramos
+                    
                     e.target.onerror = null; 
                     e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
                 }} 
@@ -27,7 +25,7 @@ export const Card = ({ item, category }) => {
             <div className="card-body">
                 <h5 className="card-title fw-bold">{item.name}</h5>
                 <div className="d-flex justify-content-between mt-4">
-                    {/* El link usa item.uid para que el Single sepa qué ID cargar */}
+                    
                     <Link to={`/single/${category}/${item.uid}`} className="btn btn-outline-primary">
                         Learn more!
                     </Link>

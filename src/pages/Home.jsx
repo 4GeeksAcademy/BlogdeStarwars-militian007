@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { Context } from "../appContext.jsx"; // Ruta según tu árbol de archivos
+import { Context } from "../appContext.jsx"; 
 import { Card } from "../components/Card.jsx";
 
 export const Home = () => {
     const { store, actions } = useContext(Context);
 
     useEffect(() => {
-        // Pedimos los datos solo una vez para evitar el parpadeo infinito
+        
         actions.getStarWarsData("people");
         actions.getStarWarsData("planets");
         actions.getStarWarsData("vehicles");
-    }, []); // IMPORTANTE: No quites estos corchetes
+    }, []); 
 
     return (
         <div className="container mt-5 pb-5">

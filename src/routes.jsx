@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home.jsx";
 import { Single } from "./pages/Single.jsx";
-import injectContext from "./appContext.jsx"; // Según tu árbol de archivos
+import injectContext from "./appContext.jsx"; 
 import { Navbar } from "./components/Navbar.jsx";
 
 const Layout = () => {

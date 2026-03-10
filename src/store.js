@@ -7,7 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			favorites: []
 		},
 		actions: {
-			// Función para cargar los datos iniciales de la Home
+			
 			getStarWarsData: async (endpoint) => {
 				try {
 					const response = await fetch(`https://www.swapi.tech/api/${endpoint}`);
@@ -18,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			// Función para gestionar favoritos
+			
 			add_favorite: (name) => {
 				const store = getStore();
 				if (store.favorites.includes(name)) {
