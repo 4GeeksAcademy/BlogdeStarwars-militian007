@@ -1,54 +1,34 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Context } from "../appContext.jsx";
 
 export const Card = ({ item, endpoint }) => {
-    const { store, dispatch } = useGlobalReducer();
-    const errorCount = useRef(0);
-
+    const { store, actions } = useContext(Context);
     
-    const idFromUrl = item.url ? item.url.split("/").filter(Boolean).pop() : item.uid;
-    const folder = endpoint === "people" ? "characters" : endpoint;
+    // Esta función es la clave: convierte "Luke Skywalker" en "luke-skywalker"
+    const formatName = (name) => name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
     
-    const [imgSource, setImgSource] = useState(`https://raw.githubusercontent.com/breatheco-de/swapi-images/master/guides/${folder}/${idFromUrl}.jpg`);
-
-    useEffect(() => {
-        setImgSource(`https://raw.githubusercontent.com/breatheco-de/swapi-images/master/guides/${folder}/${idFromUrl}.jpg`);
-        errorCount.current = 0;
-    }, [idFromUrl, folder]);
-
-    const handleImgError = () => {
-        if (errorCount.current === 0) {
-            errorCount.current = 1;
-            setImgSource(`https://starwars-visualguide.com/assets/img/${folder}/${idFromUrl}.jpg`);
-        } else if (errorCount.current === 1) {
-            errorCount.current = 2;
-            setImgSource("https://starwars-visualguide.com/assets/img/placeholder.jpg");
-        }
-    };
-
-    const isFavorite = store.favorites.includes(item.name);
+    // URL corregida para apuntar a la base de datos de imágenes correcta
+    const imgUrl = `https://raw.githubusercontent.com/breatheco-de/swapi-images/master/public/images/${endpoint === "people" ? "characters" : endpoint}/${endpoint === "people" ? formatName(item.name) : item.uid}.jpg`;
 
     return (
-        <div className="card bg-dark text-white border-secondary h-100 shadow" style={{ minWidth: "18rem", maxWidth: "18rem" }}>
+        <div className="card bg-dark text-white border-secondary h-100 mx-2 shadow" style={{ minWidth: "18rem" }}>
             <img 
-                src={imgSource} 
+                src={imgUrl} 
                 className="card-img-top" 
-                alt={item.name} 
-                onError={handleImgError}
-                style={{ height: "250px", objectFit: "cover", objectPosition: "top" }}
+                style={{ height: "250px", objectFit: "cover" }}
+                // Si la imagen no existe en el servidor, ponemos este respaldo
+                onError={(e) => e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg"} 
             />
-            <div className="card-body d-flex flex-column justify-content-between">
+            <div className="card-body d-flex flex-column justify-content-between text-center">
                 <h5 className="card-title text-danger fw-bold">{item.name}</h5>
                 <div className="d-flex justify-content-between mt-3">
-                    <Link to={`/single/${idFromUrl}`} className="btn btn-outline-primary px-3">
-                        Learn more!
-                    </Link>
+                    <Link to={`/single/${endpoint}/${item.uid}`} className="btn btn-outline-primary">Learn more!</Link>
                     <button 
-                        className={`btn ${isFavorite ? "btn-warning" : "btn-outline-warning"}`}
-                        onClick={() => dispatch({ type: "add_favorite", payload: item.name })}
+                        className="btn btn-outline-warning" 
+                        onClick={() => actions.add_favorite(item.name)}
                     >
-                        <i className={`${isFavorite ? "fas" : "far"} fa-heart`}></i>
+                        <i className={store.favorites.includes(item.name) ? "fas fa-heart" : "far fa-heart"}></i>
                     </button>
                 </div>
             </div>

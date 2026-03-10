@@ -1,13 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
-import Layout from './pages/Layout.jsx'
-import { StoreProvider } from './hooks/useGlobalReducer.jsx'
+import Layout from "./routes.jsx"; // Importamos tu Layout (que ya tiene el router dentro)
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <StoreProvider>
-      <Layout />
-    </StoreProvider>
+    <Layout />
   </React.StrictMode>,
 )

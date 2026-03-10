@@ -1,33 +1,26 @@
-export const initialStore = () => {
-    return {
-        people: [],
-        planets: [],
-        vehicles: [],
-        favorites: []
-    };
+const getState = ({ getStore, getActions, setStore }) => {
+	return {
+		store: {
+			people: [],
+			planets: [],
+			vehicles: [], // Mantenemos la lista de vehículos
+			favorites: []
+		},
+		actions: {
+			set_data: (endpoint, data) => {
+				const store = getStore();
+				setStore({ ...store, [endpoint]: data });
+			},
+			add_favorite: (name) => {
+				const store = getStore();
+				if (store.favorites.includes(name)) {
+					setStore({ favorites: store.favorites.filter((fav) => fav !== name) });
+				} else {
+					setStore({ favorites: [...store.favorites, name] });
+				}
+			}
+		}
+	};
 };
 
-const storeReducer = (store, action) => {
-    switch (action.type) {
-        case "set_people":
-            return { ...store, people: action.payload };
-        case "set_planets":
-            return { ...store, planets: action.payload };
-        case "set_vehicles":
-            return { ...store, vehicles: action.payload };
-        case "add_favorite":
-            
-            if (store.favorites.includes(action.payload)) return store;
-            return { ...store, favorites: [...store.favorites, action.payload] };
-        case "remove_favorite":
-            
-            return {
-                ...store,
-                favorites: store.favorites.filter((item) => item !== action.payload)
-            };
-        default:
-            return store;
-    }
-};
-
-export default storeReducer;
+export default getState;

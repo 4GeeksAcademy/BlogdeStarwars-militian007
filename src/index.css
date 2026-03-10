@@ -1,36 +1,24 @@
-
-body {
-   
-    background-image: url("https://cdn.eso.org/images/screen/eso1625a.jpg");
-    
-    
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-    
-    background-attachment: fixed;
-    
-    
-    background-color: #000000;
-    
-    
-    color: white;
-    
-   
-    margin: 0;
-    padding: 0;
-    
-    
-    font-family: 'Roboto', sans-serif;
+/* Evita que las imágenes parpadeen al cargar */
+img {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-
-.card {
-    background-color: rgba(33, 37, 41, 0.9) !important; 
+/* Scrollbar para que no salte el layout */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #ff0000 #212529;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+}
 
-.single-container {
-    background-color: rgba(33, 37, 41, 0.85) !important;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ff0000;
+    border-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #212529;
 }

@@ -1,88 +1,95 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
 export const Single = () => {
-    const { theId } = useParams();
+    const { category, theId } = useParams();
     const [item, setItem] = useState(null);
-    const [type, setType] = useState(""); 
     const [loading, setLoading] = useState(true);
-    const [imgSource, setImgSource] = useState("");
-    const errorCount = useRef(0);
 
     useEffect(() => {
-        const getDetails = async () => {
-            setLoading(true);
-            errorCount.current = 0;
-            const endpoints = ["people", "planets", "vehicles"];
-            
-            for (let endpoint of endpoints) {
-                try {
-                    const response = await fetch(`https://www.swapi.tech/api/${endpoint}/${theId}`);
-                    const data = await response.json();
-                    if (data.message === "ok") {
-                        setItem(data.result);
-                        setType(endpoint);
-                        const folder = endpoint === "people" ? "characters" : endpoint;
-                        setImgSource(`https://raw.githubusercontent.com/breatheco-de/swapi-images/master/guides/${folder}/${theId}.jpg`);
-                        setLoading(false);
-                        return; 
-                    }
-                } catch (error) { console.error(error); }
-            }
-            setLoading(false);
-        };
-        getDetails();
-    }, [theId]);
+        setLoading(true);
+        fetch(`https://www.swapi.tech/api/${category}/${theId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.result) {
+                    setItem(data.result);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                setLoading(false);
+            });
+    }, [category, theId]);
 
-    if (loading) return <div className="text-center mt-5 text-white py-5"><h3>Consultando archivos de la República...</h3></div>;
-    if (!item) return <div className="text-center mt-5 text-white">No encontrado</div>;
+    if (loading) return <div className="text-center mt-5 text-white"><h1>Cargando detalles...</h1></div>;
+    if (!item) return <div className="text-center mt-5 text-white"><h1>No se encontró la información</h1></div>;
 
-    const { properties } = item;
+    const props = item.properties;
+    
+    // Lógica de imagen única para Single
+    const formatName = (name) => name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+    const imgUrl = `https://raw.githubusercontent.com/breatheco-de/swapi-images/master/public/images/${category === "people" ? "characters" : category}/${category === "people" ? formatName(props.name) : theId}.jpg`;
 
     return (
-        <div className="container p-5 mt-5 rounded shadow-lg text-white" style={{ backgroundColor: "rgba(20, 20, 20, 0.85)", border: "1px solid #444" }}>
-            <div className="row">
+        <div className="container text-white mt-5">
+            {/* Parte superior: Imagen y Descripción */}
+            <div className="row bg-dark p-4 rounded shadow-lg border-0">
                 <div className="col-md-6 text-center">
                     <img 
-                        src={imgSource} 
-                        onError={() => setImgSource("https://starwars-visualguide.com/assets/img/placeholder.jpg")}
-                        className="img-fluid rounded border border-secondary shadow" 
-                        alt={properties.name} 
+                        src={imgUrl} 
+                        className="img-fluid rounded" 
+                        style={{ maxHeight: "450px", objectFit: "contain", border: "1px solid #444" }}
+                        onError={(e) => e.target.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg"} 
                     />
                 </div>
-                <div className="col-md-6 d-flex flex-column justify-content-center">
-                    <h1 className="display-3 text-danger fw-bold">{properties.name}</h1>
-                    <p className="fs-5 text-secondary">ID de Registro: {theId}</p>
+                <div className="col-md-6 text-center d-flex flex-column justify-content-center px-4">
+                    <h1 className="text-danger display-4 fw-bold mb-4">{props.name}</h1>
+                    <p className="fs-5 lh-base">
+                        {item.description || "Esta es una entrada detallada de la base de datos de Star Wars. Aquí se recopilan todas las especificaciones técnicas y biográficas de este elemento de la galaxia."}
+                    </p>
                 </div>
             </div>
 
-            <hr className="my-5 border-danger" />
+            {/* Fila de Detalles Técnicos (Los 6 bloques rojos) */}
+            <div className="row mt-5 text-danger text-center border-top border-danger pt-4 fw-bold gx-0">
+                <div className="col-md-2 border-end border-danger border-opacity-25">
+                    Name<br/><span className="text-white fw-normal d-block mt-2">{props.name}</span>
+                </div>
 
-            <div className="row text-center text-danger fw-bold gy-4">
-                {type === "people" && (
+                {category === "people" && (
                     <>
-                        <div className="col-6 col-md-2 border-end border-secondary">Birth Year<br/><span className="text-white fw-normal">{properties.birth_year}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Gender<br/><span className="text-white fw-normal">{properties.gender}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Height<br/><span className="text-white fw-normal">{properties.height}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Mass<br/><span className="text-white fw-normal">{properties.mass}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Eye Color<br/><span className="text-white fw-normal">{properties.eye_color}</span></div>
-                        <div className="col-6 col-md-2">Skin Color<br/><span className="text-white fw-normal">{properties.skin_color}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Birth Year<br/><span className="text-white fw-normal d-block mt-2">{props.birth_year}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Gender<br/><span className="text-white fw-normal d-block mt-2">{props.gender}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Height<br/><span className="text-white fw-normal d-block mt-2">{props.height}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Skin Color<br/><span className="text-white fw-normal d-block mt-2">{props.skin_color}</span></div>
+                        <div className="col-md-2">Eye Color<br/><span className="text-white fw-normal d-block mt-2">{props.eye_color}</span></div>
                     </>
                 )}
-                {type === "planets" && (
+
+                {category === "planets" && (
                     <>
-                        <div className="col-6 col-md-2 border-end border-secondary">Climate<br/><span className="text-white fw-normal">{properties.climate}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Population<br/><span className="text-white fw-normal">{properties.population}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Diameter<br/><span className="text-white fw-normal">{properties.diameter}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Terrain<br/><span className="text-white fw-normal">{properties.terrain}</span></div>
-                        <div className="col-6 col-md-2 border-end border-secondary">Gravity<br/><span className="text-white fw-normal">{properties.gravity}</span></div>
-                        <div className="col-6 col-md-2">Rotation<br/><span className="text-white fw-normal">{properties.rotation_period}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Climate<br/><span className="text-white fw-normal d-block mt-2">{props.climate}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Population<br/><span className="text-white fw-normal d-block mt-2">{props.population}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Orbital Period<br/><span className="text-white fw-normal d-block mt-2">{props.orbital_period}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Rotation Period<br/><span className="text-white fw-normal d-block mt-2">{props.rotation_period}</span></div>
+                        <div className="col-md-2">Diameter<br/><span className="text-white fw-normal d-block mt-2">{props.diameter}</span></div>
+                    </>
+                )}
+
+                {category === "vehicles" && (
+                    <>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Model<br/><span className="text-white fw-normal d-block mt-2">{props.model}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Class<br/><span className="text-white fw-normal d-block mt-2">{props.vehicle_class}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Manufacturer<br/><span className="text-white fw-normal d-block mt-2">{props.manufacturer}</span></div>
+                        <div className="col-md-2 border-end border-danger border-opacity-25">Cost<br/><span className="text-white fw-normal d-block mt-2">{props.cost_in_credits}</span></div>
+                        <div className="col-md-2">Length<br/><span className="text-white fw-normal d-block mt-2">{props.length}</span></div>
                     </>
                 )}
             </div>
 
-            <div className="mt-5">
-                <Link to="/" className="btn btn-outline-danger px-4">Volver al Inicio</Link>
+            <div className="text-center mt-5 mb-5">
+                <Link to="/" className="btn btn-outline-danger px-5 py-2">Back to home</Link>
             </div>
         </div>
     );

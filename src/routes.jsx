@@ -1,20 +1,20 @@
-import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
-} from "react-router-dom";
-import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-import { Demo } from "./pages/Demo";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Home } from "./pages/Home.jsx";
+import { Single } from "./pages/Single.jsx";
+import injectContext from "./appContext.jsx"; // Asegúrate que la ruta sea correcta
 
-export const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
-        
-        <Route index element={<Home />} />
-        <Route path="single/:theId" element={<Single />} />
-        <Route path="demo" element={<Demo />} />
-      </Route>
-    )
-);
+const Layout = () => {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route element={<Home />} path="/" />
+                {/* Esta línea es la que permite que Single reciba la categoría e ID */}
+                <Route element={<Single />} path="/single/:category/:theId" />
+                <Route element={<h1>Not found!</h1>} />
+            </Routes>
+        </BrowserRouter>
+    );
+};
+
+export default injectContext(Layout);

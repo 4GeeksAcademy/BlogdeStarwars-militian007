@@ -1,17 +1,12 @@
-import React, { useReducer, useContext, createContext } from "react";
-import storeReducer, { initialStore } from "../store.js";
+import { useContext } from "react";
+import { Context } from "../appContext.jsx";
 
-const Context = createContext();
-
-export const StoreProvider = ({ children }) => {
-    const [store, dispatch] = useReducer(storeReducer, initialStore());
-    return (
-        <Context.Provider value={{ store, dispatch }}>
-            {children}
-        </Context.Provider>
-    );
+const useGlobalReducer = () => {
+    const context = useContext(Context);
+    if (!context) {
+        throw new Error("useGlobalReducer debe ser usado dentro de un StoreProvider o Context.Provider");
+    }
+    return context;
 };
-
-const useGlobalReducer = () => useContext(Context);
 
 export default useGlobalReducer;

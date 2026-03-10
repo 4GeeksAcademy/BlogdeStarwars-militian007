@@ -1,46 +1,44 @@
-import React, { useEffect } from "react";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import React, { useEffect, useContext } from "react";
+import { Context } from "../appContext.jsx";
 import { Card } from "../components/Card.jsx";
 
 export const Home = () => {
-    const { store, dispatch } = useGlobalReducer();
+	const { store, actions } = useContext(Context);
 
-    useEffect(() => {
-        fetch("https://www.swapi.tech/api/people")
-            .then(res => res.json())
-            .then(data => dispatch({ type: "set_people", payload: data.results }))
-            .catch(err => console.error(err));
+	useEffect(() => {
+		const fetchData = async (endpoint) => {
+			try {
+				const response = await fetch(`https://www.swapi.tech/api/${endpoint}`);
+				const data = await response.json();
+				// Guardamos los datos usando la acción set_data para evitar errores de dispatch
+				actions.set_data(endpoint, data.results || data.result);
+			} catch (error) {
+				console.error("Error cargando " + endpoint, error);
+			}
+		};
 
-        fetch("https://www.swapi.tech/api/planets")
-            .then(res => res.json())
-            .then(data => dispatch({ type: "set_planets", payload: data.results }))
-            .catch(err => console.error(err));
+		if (store.people.length === 0) fetchData("people");
+		if (store.planets.length === 0) fetchData("planets");
+		if (store.vehicles.length === 0) fetchData("vehicles");
+	}, []);
 
-        fetch("https://www.swapi.tech/api/vehicles")
-            .then(res => res.json())
-            .then(data => dispatch({ type: "set_vehicles", payload: data.results }))
-            .catch(err => console.error(err));
-    }, []);
+	return (
+		<div className="container-fluid bg-black text-white min-vh-100 p-5">
+			<h1 className="text-danger fw-bold mb-4">Characters</h1>
+			<div className="d-flex flex-row overflow-auto pb-4 mb-5">
+				{store.people.map((p) => <Card key={p.uid} item={p} endpoint="people" />)}
+			</div>
 
-    return (
-        <div className="container-fluid mt-5 px-5">
-            <h1 className="text-danger fw-bold mb-4 mt-5">Characters</h1>
-            <div className="d-flex flex-row flex-nowrap overflow-auto pb-4 custom-scrollbar">
-                {store.people && store.people.map((item) => (
-                    <div key={item.uid} className="me-4">
-                        <Card item={item} endpoint="people" />
-                    </div>
-                ))}
-            </div>
+			<h1 className="text-danger fw-bold mb-4">Planets</h1>
+			<div className="d-flex flex-row overflow-auto pb-4 mb-5">
+				{store.planets.map((pl) => <Card key={pl.uid} item={pl} endpoint="planets" />)}
+			</div>
 
-            <h1 className="text-danger fw-bold mb-4 mt-5">Planets</h1>
-            <div className="d-flex flex-row flex-nowrap overflow-auto pb-4 custom-scrollbar">
-                {store.planets && store.planets.map((item) => (
-                    <div key={item.uid} className="me-4">
-                        <Card item={item} endpoint="planets" />
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+			{/* SECCIÓN RECUPERADA: Vehicles */}
+			<h1 className="text-danger fw-bold mb-4">Vehicles</h1>
+			<div className="d-flex flex-row overflow-auto pb-4">
+				{store.vehicles.map((v) => <Card key={v.uid} item={v} endpoint="vehicles" />)}
+			</div>
+		</div>
+	);
 };
